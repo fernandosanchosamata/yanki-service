@@ -1,0 +1,133 @@
+<mxfile host="Electron" modified="2026-04-26T21:21:01.759Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.7.5 Chrome/114.0.5735.289 Electron/25.8.1 Safari/537.36" version="21.7.5" etag="NGGH6ckedB6MhDtdpwdS" type="device">
+  <diagram id="yanki-transfer-sequence" name="Transferencia Yanki via API Gateway">
+    <mxGraphModel dx="1548" dy="606" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1450" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="yanki-service - Secuencia: transferencia entre monederos via API Gateway" style="text;html=1;strokeColor=none;fillColor=none;fontSize=18;fontStyle=1;align=left;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="40" y="20" width="820" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="note" value="Flujo principal: el cliente obtiene JWT, ejecuta una transferencia Yanki por numero celular, se consultan wallets origen/destino, se descuenta/deposita en wallet o cuenta bancaria asociada, se guarda la transaccion y se publica evento Kafka." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=left;spacing=10;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="1020" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="clientLife" value="" style="shape=line;html=1;strokeColor=#999999;dashed=1;endArrow=none;" parent="1" vertex="1">
+          <mxGeometry x="105" y="175" width="1" height="650" as="geometry" />
+        </mxCell>
+        <mxCell id="authLife" value="" style="shape=line;html=1;strokeColor=#999999;dashed=1;endArrow=none;" parent="1" vertex="1">
+          <mxGeometry x="275" y="175" width="1" height="650" as="geometry" />
+        </mxCell>
+        <mxCell id="gatewayLife" value="" style="shape=line;html=1;strokeColor=#999999;dashed=1;endArrow=none;" parent="1" vertex="1">
+          <mxGeometry x="445" y="175" width="1" height="650" as="geometry" />
+        </mxCell>
+        <mxCell id="yankiLife" value="" style="shape=line;html=1;strokeColor=#999999;dashed=1;endArrow=none;" parent="1" vertex="1">
+          <mxGeometry x="620" y="175" width="1" height="650" as="geometry" />
+        </mxCell>
+        <mxCell id="mongoLife" value="" style="shape=line;html=1;strokeColor=#999999;dashed=1;endArrow=none;" parent="1" vertex="1">
+          <mxGeometry x="810" y="175" width="1" height="650" as="geometry" />
+        </mxCell>
+        <mxCell id="accountLife" value="" style="shape=line;html=1;strokeColor=#999999;dashed=1;endArrow=none;" parent="1" vertex="1">
+          <mxGeometry x="1000" y="175" width="1" height="650" as="geometry" />
+        </mxCell>
+        <mxCell id="kafkaLife" value="" style="shape=line;html=1;strokeColor=#999999;dashed=1;endArrow=none;" parent="1" vertex="1">
+          <mxGeometry x="1200" y="175" width="1" height="650" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" value="1. POST /auth-service/auth/login" style="endArrow=block;html=1;rounded=0;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="105" y="215" as="sourcePoint" />
+            <mxPoint x="275" y="215" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="2. JWT accessToken" style="endArrow=open;html=1;rounded=0;dashed=1;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="275" y="250" as="sourcePoint" />
+            <mxPoint x="105" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="3. POST /yanki-service/api/v1/yanki/transactions" style="endArrow=block;html=1;rounded=0;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="105" y="300" as="sourcePoint" />
+            <mxPoint x="445" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="4. Validar JWT y reenviar" style="endArrow=block;html=1;rounded=0;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="445" y="345" as="sourcePoint" />
+            <mxPoint x="620" y="345" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="5. Buscar wallet origen por celular" style="endArrow=block;html=1;rounded=0;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="390" as="sourcePoint" />
+            <mxPoint x="810" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" value="6. Buscar wallet destino por celular" style="endArrow=block;html=1;rounded=0;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="435" as="sourcePoint" />
+            <mxPoint x="810" y="435" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" value="7. Guardar YankiTransaction PROCESSING" style="endArrow=block;html=1;rounded=0;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="480" as="sourcePoint" />
+            <mxPoint x="810" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m8" value="8. Descontar origen&lt;br&gt;wallet local o cuenta asociada" style="endArrow=block;html=1;rounded=0;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="525" as="sourcePoint" />
+            <mxPoint x="1000" y="525" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m9" value="9. Depositar destino&lt;br&gt;wallet local o cuenta asociada" style="endArrow=block;html=1;rounded=0;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="580" as="sourcePoint" />
+            <mxPoint x="1000" y="580" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m10" value="10. Actualizar transaccion COMPLETED" style="endArrow=block;html=1;rounded=0;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="635" as="sourcePoint" />
+            <mxPoint x="810" y="635" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11" value="11. Publicar evento YANKI_TRANSFER" style="endArrow=block;html=1;rounded=0;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="690" as="sourcePoint" />
+            <mxPoint x="1200" y="690" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m12" value="12. 201 Created + YankiTransaction" style="endArrow=open;html=1;rounded=0;dashed=1;strokeWidth=1.5;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="750" as="sourcePoint" />
+            <mxPoint x="105" y="750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="errorNote" value="Errores esperados: celular origen/destino no registrado, saldo Yanki insuficiente, cuenta bancaria asociada no disponible. Si falla una etapa, la transaccion queda FAILED." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;align=left;spacing=10;" parent="1" vertex="1">
+          <mxGeometry x="40" y="805" width="1020" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="B6FhbcSlZWfsEgAefNB6-1" value="Cliente / Postman" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="130" width="130" height="630" as="geometry" />
+        </mxCell>
+        <mxCell id="B6FhbcSlZWfsEgAefNB6-2" value="auth-service" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="210" y="130" width="125" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="B6FhbcSlZWfsEgAefNB6-3" value="api-gateway" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="380" y="130" width="125" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="B6FhbcSlZWfsEgAefNB6-4" value="yanki-service" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="555" y="130" width="125" height="630" as="geometry" />
+        </mxCell>
+        <mxCell id="B6FhbcSlZWfsEgAefNB6-5" value="MongoDB&lt;br style=&quot;border-color: var(--border-color); font-weight: 700;&quot;&gt;&lt;span style=&quot;font-weight: 700;&quot;&gt;ntt_yanki&lt;/span&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="745" y="130" width="135" height="630" as="geometry" />
+        </mxCell>
+        <mxCell id="B6FhbcSlZWfsEgAefNB6-6" value="account-service&lt;br style=&quot;border-color: var(--border-color); font-weight: 700;&quot;&gt;&lt;span style=&quot;font-weight: 700;&quot;&gt;opcional&lt;/span&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="930" y="130" width="135" height="610" as="geometry" />
+        </mxCell>
+        <mxCell id="B6FhbcSlZWfsEgAefNB6-7" value="Kafka&lt;br style=&quot;border-color: var(--border-color); font-weight: 700;&quot;&gt;&lt;span style=&quot;font-weight: 700;&quot;&gt;transactions-executed&lt;/span&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=3;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1125" y="130" width="145" height="685" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
