@@ -1,0 +1,23 @@
+services:
+  yanki-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: yanki-service:latest
+    container_name: ntt_yanki_service
+    restart: unless-stopped
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/ntt_yanki
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      YANKI_ACCOUNT_SERVICE_URL: http://ACCOUNT-SERVICE/api/v1/accounts
+    networks:
+      - ntt_network
+
+networks:
+  ntt_network:
+    external: true
+    name: infra_ntt_network
