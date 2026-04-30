@@ -28,6 +28,7 @@ public class YankiTransactionServiceImpl implements YankiTransactionService {
 
   @Override
   public Single<YankiTransaction> executeTransaction(YankiTransactionRequest request) {
+    log.info("Iniciando transaccion Yanki. amount={}", request.getAmount());
     return walletRepository
         .findByPhoneNumber(request.getSourcePhoneNumber())
         .switchIfEmpty(Single.error(new IllegalArgumentException("Celular origen no registrado.")))
@@ -61,11 +62,23 @@ public class YankiTransactionServiceImpl implements YankiTransactionService {
                                           .flatMap(
                                               ignored -> {
                                                 savedTransaction.setStatus("COMPLETED");
-                                                return transactionRepository.save(savedTransaction);
+                                                return transactionRepository
+                                                    .save(savedTransaction)
+                                                    .doOnSuccess(
+                                                        saved ->
+                                                            log.info(
+                                                                "Transaccion Yanki completada."
+                                                                    + " transactionId={}",
+                                                                saved.getId()));
                                               })
                                           .flatMap(this::publishTransactionEvent)
                                           .onErrorResumeNext(
                                               e -> {
+                                                log.warn(
+                                                    "Transaccion Yanki fallida. transactionId={},"
+                                                        + " error={}",
+                                                    savedTransaction.getId(),
+                                                    e.getMessage());
                                                 savedTransaction.setStatus("FAILED");
                                                 return transactionRepository
                                                     .save(savedTransaction)
@@ -87,10 +100,14 @@ public class YankiTransactionServiceImpl implements YankiTransactionService {
           .map(res -> true);
     } else {
       if (source.getBalance().compareTo(amount) < 0) {
+        log.warn("Descuento Yanki rechazado por saldo insuficiente.");
         return Single.error(new IllegalArgumentException("Saldo Yanki insuficiente."));
       }
       source.setBalance(source.getBalance().subtract(amount));
-      return walletRepository.save(source).map(w -> true);
+      return walletRepository
+          .save(source)
+          .doOnSuccess(wallet -> log.debug("Saldo Yanki descontado. walletId={}", wallet.getId()))
+          .map(w -> true);
     }
   }
 
@@ -100,7 +117,10 @@ public class YankiTransactionServiceImpl implements YankiTransactionService {
       return accountClient.depositToAccount(target.getLinkedAccountId(), amount).map(res -> true);
     } else {
       target.setBalance(target.getBalance().add(amount));
-      return walletRepository.save(target).map(w -> true);
+      return walletRepository
+          .save(target)
+          .doOnSuccess(wallet -> log.debug("Saldo Yanki depositado. walletId={}", wallet.getId()))
+          .map(w -> true);
     }
   }
 

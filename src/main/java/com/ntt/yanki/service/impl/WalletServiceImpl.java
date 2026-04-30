@@ -9,10 +9,12 @@ import io.reactivex.rxjava3.core.Single;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WalletServiceImpl implements WalletService {
 
   private final WalletRepository walletRepository;
@@ -20,12 +22,14 @@ public class WalletServiceImpl implements WalletService {
 
   @Override
   public Single<Wallet> createWallet(WalletCreationRequest request) {
+    log.info("Iniciando creacion de wallet.");
     return walletRepository
         .findByPhoneNumber(request.getPhoneNumber())
         .isEmpty()
         .flatMap(
             isEmpty -> {
               if (!isEmpty) {
+                log.warn("Creacion de wallet rechazada por celular duplicado.");
                 return Single.error(
                     new IllegalArgumentException("El numero de celular ya esta registrado."));
               }
@@ -49,7 +53,13 @@ public class WalletServiceImpl implements WalletService {
                     .flatMap(
                         accountId -> {
                           wallet.setLinkedAccountId(accountId);
-                          return walletRepository.save(wallet);
+                          return walletRepository
+                              .save(wallet)
+                              .doOnSuccess(
+                                  saved ->
+                                      log.info(
+                                          "Wallet guardada con cuenta asociada. walletId={}",
+                                          saved.getId()));
                         })
                     .onErrorResumeNext(
                         e ->
@@ -57,13 +67,16 @@ public class WalletServiceImpl implements WalletService {
                                 new IllegalArgumentException(
                                     "No se pudo validar la tarjeta de debito: " + e.getMessage())));
               } else {
-                return walletRepository.save(wallet);
+                return walletRepository
+                    .save(wallet)
+                    .doOnSuccess(saved -> log.info("Wallet guardada. walletId={}", saved.getId()));
               }
             });
   }
 
   @Override
   public Single<Wallet> getWalletByPhoneNumber(String phoneNumber) {
+    log.info("Consultando wallet por celular.");
     return walletRepository
         .findByPhoneNumber(phoneNumber)
         .switchIfEmpty(Single.error(new IllegalArgumentException("Monedero no encontrado.")));
