@@ -59,7 +59,8 @@ class WalletServiceImplTest {
     when(walletRepository.findByPhoneNumber("999888777")).thenReturn(Maybe.empty());
     when(accountClient.getMainAccountIdByCardNumber("4555-6666-7777-8888"))
         .thenReturn(Single.just("account-1"));
-    when(walletRepository.save(any(Wallet.class))).thenAnswer(invocation -> Single.just(invocation.getArgument(0)));
+    when(walletRepository.save(any(Wallet.class)))
+        .thenAnswer(invocation -> Single.just(invocation.getArgument(0)));
 
     Wallet wallet = service.createWallet(request).blockingGet();
 
@@ -70,7 +71,8 @@ class WalletServiceImplTest {
   @Test
   void createWalletRejectsDuplicatedPhoneNumber() {
     WalletCreationRequest request = walletRequest();
-    when(walletRepository.findByPhoneNumber("999888777")).thenReturn(Maybe.just(Wallet.builder().build()));
+    when(walletRepository.findByPhoneNumber("999888777"))
+        .thenReturn(Maybe.just(Wallet.builder().build()));
 
     var observer = service.createWallet(request).test();
 

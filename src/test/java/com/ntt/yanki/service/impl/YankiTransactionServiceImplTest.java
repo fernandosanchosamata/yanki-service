@@ -58,7 +58,8 @@ class YankiTransactionServiceImplTest {
               }
               return Single.just(transaction);
             });
-    when(walletRepository.save(any(Wallet.class))).thenAnswer(invocation -> Single.just(invocation.getArgument(0)));
+    when(walletRepository.save(any(Wallet.class)))
+        .thenAnswer(invocation -> Single.just(invocation.getArgument(0)));
     when(kafkaTemplate.send(anyString(), anyString(), any())).thenReturn(Mono.empty());
 
     YankiTransaction transaction = service.executeTransaction(request).blockingGet();
